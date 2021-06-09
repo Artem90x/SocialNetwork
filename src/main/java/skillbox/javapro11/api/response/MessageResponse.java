@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -31,4 +29,5 @@ public class MessageResponse extends ResponseData{
     private String readStatus;
 
     private String message;
+    private PersonResponse recipient;
 }

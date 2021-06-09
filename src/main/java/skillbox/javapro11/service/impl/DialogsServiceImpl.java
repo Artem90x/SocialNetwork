@@ -55,7 +55,8 @@ public class DialogsServiceImpl implements DialogsService {
         createPerson2Dialog(currentPerson, newDialog);
         createPerson2Dialog(personRepository.findById(dialogRequest.getUsersIds()[0]), newDialog);
         dialogData.setId(newDialog.getId());
-        return new CommonResponseData(dialogData, "string");
+        createMessage("message", currentPerson, newDialog.getId());
+        return new CommonResponseData(dialogData, "");
     }
 
     @Override
@@ -146,13 +147,19 @@ public class DialogsServiceImpl implements DialogsService {
 
     private void createMessage(String messageText, Person currentPerson, long idDialog) {
         Dialog dialog = dialogRepository.findById(idDialog);
-        Message newMessage = new Message();
-        newMessage.setAuthor(currentPerson);
-        newMessage.setText(messageText);
-        newMessage.setTime(LocalDateTime.now());
-        newMessage.setReadStatus(ReadStatus.SENT);
-        newMessage.setDialog(dialog);
-        messageRepository.save(newMessage);
+        List<Person> persons = personRepository.findPersonByDialog(idDialog);
+        List<Message> messages = new ArrayList<>();
+        persons.stream().filter(p -> p.getId() != currentPerson.getId()).forEach(pp -> {
+                Message newMessage = new Message();
+                newMessage.setAuthor(currentPerson);
+                newMessage.setText(messageText);
+                newMessage.setTime(LocalDateTime.now());
+                newMessage.setReadStatus(ReadStatus.SENT);
+                newMessage.setRecipient(pp);
+                newMessage.setDialog(dialog);
+                messages.add(newMessage);
+            });
+        messageRepository.saveAll(messages);
     }
 
     private void createPerson2Dialog(Person ownerDialog, Dialog dialog) {
@@ -175,7 +182,7 @@ public class DialogsServiceImpl implements DialogsService {
         }
 
         CommonListResponse cListResponse = new CommonListResponse();
-        cListResponse.setError("string");
+        cListResponse.setError("");
         cListResponse.setTimestamp(LocalDateTime.now());
         //All items with query filter
         cListResponse.setTotal(dialogPage.getTotalElements());
@@ -188,18 +195,18 @@ public class DialogsServiceImpl implements DialogsService {
             dialogResponse.setId(dialog.getId());
             //All unread messages in the dialog
             dialogResponse.setUnreadCount(messageRepository.getUnreadCountOfDialog(dialog));
-            //Last message {
             Message lastMessage = messageRepository.getLastMessageOfDialog(dialog);
-            MessageResponse messageResponse = new MessageResponse();
-            messageResponse.setId(lastMessage.getId());
-            messageResponse.setTime(Utils.getLongFromLocalDateTime(lastMessage.getTime()));
-            messageResponse.setAuthorId(lastMessage.getAuthor().getId());
-            messageResponse.setRecipientId(lastMessage.getRecipient().getId());
-            messageResponse.setMessageText(lastMessage.getText());
-            messageResponse.setReadStatus(lastMessage.getReadStatus().toString());
-            //}
-
-            dialogResponse.setLastMessage(messageResponse);
+            if (lastMessage != null){
+                MessageResponse messageResponse = new MessageResponse();
+                messageResponse.setId(lastMessage.getId());
+                messageResponse.setTime(Utils.getLongFromLocalDateTime(lastMessage.getTime()));
+                messageResponse.setAuthorId(lastMessage.getAuthor().getId());
+                messageResponse.setRecipientId(lastMessage.getRecipient().getId());
+                messageResponse.setRecipient(PersonResponse.fromPerson(lastMessage.getRecipient()));
+                messageResponse.setMessageText(lastMessage.getText());
+                messageResponse.setReadStatus(lastMessage.getReadStatus().toString());
+                dialogResponse.setLastMessage(messageResponse);
+            }
             dialogResponses.add(dialogResponse);
         }
         cListResponse.setData(dialogResponses);
@@ -270,10 +277,11 @@ public class DialogsServiceImpl implements DialogsService {
     @Override
     public CommonListResponse getMessageOfDialog(long idDialog, Integer offset, Integer itemPerPage, String query) {
         Pageable pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
-        Page<Message> listMessage = messageRepository.getMessageOfDialog(pageable, query, idDialog);
+//        Page<Message> listMessage = messageRepository.getMessageOfDialog(pageable, query, idDialog);
+        Page<Message> listMessage = messageRepository.getMessageOfDialog(pageable, idDialog);
 
         CommonListResponse cListResponse = new CommonListResponse();
-        cListResponse.setError("string");
+        cListResponse.setError("");
         cListResponse.setTimestamp(LocalDateTime.now());
 
         cListResponse.setTotal(listMessage.getTotalElements());
@@ -287,6 +295,7 @@ public class DialogsServiceImpl implements DialogsService {
             messageResponse.setTime(Utils.getLongFromLocalDateTime(message.getTime()));
             messageResponse.setAuthorId(message.getAuthor().getId());
             messageResponse.setRecipientId(message.getRecipient().getId());
+            messageResponse.setRecipient(PersonResponse.fromPerson(message.getRecipient()));
             messageResponse.setMessageText(message.getText());
             messageResponse.setReadStatus(message.getReadStatus().toString());
 

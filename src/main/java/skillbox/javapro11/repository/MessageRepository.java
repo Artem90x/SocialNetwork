@@ -47,10 +47,16 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
             "WHERE m.dialog = :dialog AND m.readStatus = 'SENT'")
     int getUnreadCountOfDialog(Dialog dialog);
 
+    //TODO приходит ли query с фронта
+//    @Query( "SELECT m " +
+//            "FROM Message m " +
+//            "WHERE m.dialog.id = :idDialog AND m.text LIKE %:query% ")
+//    Page<Message> getMessageOfDialog(Pageable pageable, String query, long idDialog);
+
     @Query( "SELECT m " +
             "FROM Message m " +
-            "WHERE m.dialog.id = :idDialog AND m.text LIKE %:query% ")
-    Page<Message> getMessageOfDialog(Pageable pageable, String query, long idDialog);
+            "WHERE m.dialog.id = :idDialog")
+    Page<Message> getMessageOfDialog(Pageable pageable, long idDialog);
 
     @Query("SELECT m " +
             "FROM Message m " +

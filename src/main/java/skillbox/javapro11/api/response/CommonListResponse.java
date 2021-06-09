@@ -35,4 +35,12 @@ public class CommonListResponse extends CommonResponse {
         this.perPage = perPage;
         this.data = data;
     }
+
+    public CommonListResponse(String error, long timestamp,long total, long offset, int perPage, List<ResponseData> data) {
+        super(error, timestamp);
+        this.total = total;
+        this.offset = offset;
+        this.perPage = perPage;
+        this.data = data;
+    }
 }

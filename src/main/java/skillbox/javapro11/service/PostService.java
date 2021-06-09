@@ -1,9 +1,12 @@
 package skillbox.javapro11.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import skillbox.javapro11.api.request.CommentRequest;
 import skillbox.javapro11.api.request.PostRequest;
 import skillbox.javapro11.api.response.CommonListResponse;
 import skillbox.javapro11.api.response.CommonResponseData;
+import skillbox.javapro11.model.entity.Post;
 
 public interface PostService {
   CommonListResponse getPostSearch(String text,long dateFrom, long dateTo,
@@ -20,4 +23,5 @@ public interface PostService {
   CommonResponseData reportComment(long postId, long idComment);
   CommonResponseData recoverComment(long postId, long idComment);
 
+    Page<Post> findAllByAuthorId(long id, Pageable page);
 }

@@ -1,3 +1,4 @@
+
 CREATE TABLE notification
 (
     id bigserial NOT NULL,
@@ -9,3 +10,5 @@ CREATE TABLE notification
     contact varchar(255) NOT NULL,
     PRIMARY KEY (id)
 );
+
+ALTER SEQUENCE notification_id_seq START 10 INCREMENT 1;

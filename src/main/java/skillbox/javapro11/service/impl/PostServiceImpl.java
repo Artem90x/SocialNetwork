@@ -217,4 +217,9 @@ public class PostServiceImpl implements PostService {
     response.setData(CommentResponse.fromComment(comment));
     return response;
   }
+
+  @Override
+  public Page<Post> findAllByAuthorId(long id, Pageable page) {
+    return postRepository.findAllByAuthorId(id, page);
+  }
 }

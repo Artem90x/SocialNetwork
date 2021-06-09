@@ -14,4 +14,6 @@ public interface PersonService {
     String changePassword(String email, String password);
 
     String changeEmail(Person curPerson, String email);
+
+    Person findById(long srcId);
 }

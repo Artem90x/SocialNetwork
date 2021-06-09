@@ -38,14 +38,14 @@ public class DialogsServiceImpl implements DialogsService {
     private final MessageRepository messageRepository;
 
     @Autowired
-    public DialogsServiceImpl(AccountServiceImpl accountServiceImpl, DialogRepository dialogRepository, Person2DialogRepository person2DialogRepository, PersonRepository personRepository, MessageRepository messageRepository) {
+    public DialogsServiceImpl(AccountServiceImpl accountServiceImpl, DialogRepository dialogRepository, Person2DialogRepository person2DialogRepository,
+                              PersonRepository personRepository, MessageRepository messageRepository) {
         this.accountServiceImpl = accountServiceImpl;
         this.dialogRepository = dialogRepository;
         this.person2DialogRepository = person2DialogRepository;
         this.personRepository = personRepository;
         this.messageRepository = messageRepository;
     }
-
 
     @Override
     public CommonResponseData createDialog(DialogRequest dialogRequest) {
@@ -62,11 +62,13 @@ public class DialogsServiceImpl implements DialogsService {
     @Override
     public CommonResponseData deleteDialog(long id) {
         Dialog dialog = dialogRepository.findById(id);
+        if (dialog == null)
+            return new CommonResponseData(null, "диалог не найден");
         dialog.setDeleted(false);
         dialogRepository.save(dialog);
         DialogResponse dialogData = new DialogResponse();
         dialogData.setId(id);
-        return new CommonResponseData(dialogData, "string");
+        return new CommonResponseData(dialogData, "");
     }
 
     @Override
@@ -78,12 +80,12 @@ public class DialogsServiceImpl implements DialogsService {
 
     @Override
     public CommonResponseData deleteUsersInDialog(long idDialog, String[] usersIds) {
-        for (int i = 0; i < usersIds.length; i++){
+        for (int i = 0; i < usersIds.length; i++) {
             person2DialogRepository.deletePersInDialog(idDialog, Long.parseLong(usersIds[i]));
         }
         DialogUserShortListResponse dialogData = new DialogUserShortListResponse();
         dialogData.setUserIds(Arrays.stream(usersIds).map(Long::parseLong).collect(Collectors.toList()));
-        return new CommonResponseData(dialogData, "string");
+        return new CommonResponseData(dialogData, "");
     }
 
     @Override
@@ -94,19 +96,16 @@ public class DialogsServiceImpl implements DialogsService {
         createPerson2Dialog(currentPerson, dialogRepository.findById(idDialog));
         DialogUserShortListResponse dialogData = new DialogUserShortListResponse();
         dialogData.setUserIds(usersIds);
-        return new CommonResponseData(dialogData, "string");
+        return new CommonResponseData(dialogData, "");
     }
 
     @Override
     public CommonResponseData sendMessage(long idDialog, String messageText) {
         Person currentPerson = accountServiceImpl.getCurrentPerson();
         createMessage(messageText, currentPerson, idDialog);
-
         MessageResponse dialogData = getMessageResponse(messageText, currentPerson);
-        return new CommonResponseData(dialogData, "string");
+        return new CommonResponseData(dialogData, "");
     }
-
-
 
     @Override
     public CommonResponseData editMessage(long idDialog, long idMessage, String messageText) {
@@ -115,7 +114,7 @@ public class DialogsServiceImpl implements DialogsService {
         messageRepository.save(message);
         Person currentPerson = accountServiceImpl.getCurrentPerson();
         MessageResponse dialogData = getMessageResponse(messageText, currentPerson);
-        return new CommonResponseData(dialogData, "string");
+        return new CommonResponseData(dialogData, "");
     }
 
     @Override
@@ -125,14 +124,14 @@ public class DialogsServiceImpl implements DialogsService {
         messageRepository.save(message);
         MessageResponse dialogData = new MessageResponse();
         dialogData.setMessage("ok");
-        return new CommonResponseData(dialogData, "string");
+        return new CommonResponseData(dialogData, "");
     }
 
     @Override
     public CommonResponseData changeStatusActivity(long idDialog, long idUser) {
         StatusMessageResponse statusMessageResponse = new StatusMessageResponse();
         statusMessageResponse.setMessage("ok");
-        return new CommonResponseData(statusMessageResponse, "string");
+        return new CommonResponseData(statusMessageResponse, "");
     }
 
     private MessageResponse getMessageResponse(String messageText, Person currentPerson) {
@@ -230,43 +229,38 @@ public class DialogsServiceImpl implements DialogsService {
 
     @Override
     public ResponseArrayUserIds addUserIntoDialog(long id, DialogRequest dialogRequest) {
-
+        ResponseArrayUserIds respons = new ResponseArrayUserIds();
+        respons.setTimestamp(LocalDateTime.now());
         Dialog dialog = dialogRepository.findById(id);
-        if(dialog == null && dialogRequest.getUsersIds().length > 0)
-        {
-            //TODO что вернуть при ошибки пока не понятно
-            return null;
+        if(dialog == null && dialogRequest.getUsersIds().length > 0) {
+            respons.setError("диалог не найден");
+            return respons;
         }
         List<Person2Dialog> listP2D = new ArrayList<>();
         List<Long> idForResponse = new ArrayList<>();
-        for(long personId : dialogRequest.getUsersIds())
-        {
+        for(long personId : dialogRequest.getUsersIds()) {
             Person personIntoDialog = personRepository.findById(personId);
             idForResponse.add(personId);
-            if (personIntoDialog != null)
-            {
+            if (personIntoDialog != null) {
                 Person2Dialog person2Dialog = new Person2Dialog();
                 person2Dialog.setPerson(personIntoDialog);
                 person2Dialog.setDialog(dialog);
                 listP2D.add(person2Dialog);
             }
             person2DialogRepository.saveAll(listP2D);
-
         }
-        ResponseArrayUserIds responseArrayUserIds = new ResponseArrayUserIds();
-        responseArrayUserIds.setError("string");
-        responseArrayUserIds.setTimestamp(LocalDateTime.now());
-        responseArrayUserIds.setUsersIds(idForResponse);
-
-        return responseArrayUserIds;
+        respons.setUsersIds(idForResponse);
+        return respons;
     }
 
     @Override
     public CommonResponseData getInviteDialog(long idDialog) {
-        String invite = dialogRepository.getInviteByDialog(idDialog);
-
         CommonResponseData commonResponseData = new CommonResponseData();
-        commonResponseData.setError("string");
+        String invite = dialogRepository.getInviteByDialog(idDialog);
+        if (invite.isEmpty()) {
+            commonResponseData.setError("не удалось сформировать ссылку");
+            return commonResponseData;
+        }
         commonResponseData.setTimestamp(LocalDateTime.now());
         LinkResponse linkResponse = new LinkResponse(invite);
         commonResponseData.setData(linkResponse);
@@ -308,19 +302,16 @@ public class DialogsServiceImpl implements DialogsService {
 
     @Override
     public CommonResponseData deleteMessage(long idMessage, long idDialog) {
+        CommonResponseData commonResponseData = new CommonResponseData();
+        commonResponseData.setTimestamp(LocalDateTime.now());
         Message message = messageRepository.findByIdAndDialog(idMessage, idDialog);
-        if(message != null)
-        {
+        if (message != null) {
             message.setDeleted(true);
             messageRepository.save(message);
-        }else
-        {
-            idMessage = 0;
+        } else {
+            commonResponseData.setError("сообщение не найдено");
+            return commonResponseData;
         }
-
-        CommonResponseData commonResponseData = new CommonResponseData();
-        commonResponseData.setError("string");
-        commonResponseData.setTimestamp(LocalDateTime.now());
         IdMessageResponse idMessageResponse = new IdMessageResponse(idMessage);
         commonResponseData.setData(idMessageResponse);
 
@@ -329,17 +320,16 @@ public class DialogsServiceImpl implements DialogsService {
 
     @Override
     public CommonResponseData recoverMessage(long idMessage, long idDialog) {
+        CommonResponseData commonResponseData = new CommonResponseData();
+        commonResponseData.setTimestamp(LocalDateTime.now());
         Message message = messageRepository.findByIdAndDialog(idMessage, idDialog);
-        if(message != null)
-        {
+        if (message != null) {
             message.setDeleted(false);
             messageRepository.save(message);
+        }else {
+            commonResponseData.setError("сообщение не найдено");
+            return commonResponseData;
         }
-
-        CommonResponseData commonResponseData = new CommonResponseData();
-        commonResponseData.setError("string");
-        commonResponseData.setTimestamp(LocalDateTime.now());
-        //Message{
         MessageResponse messageResponse = new MessageResponse();
         messageResponse.setId(message.getId());
         messageResponse.setTime(Utils.getLongFromLocalDateTime(message.getTime()));
@@ -347,7 +337,6 @@ public class DialogsServiceImpl implements DialogsService {
         messageResponse.setRecipientId(message.getRecipient().getId());
         messageResponse.setMessageText(message.getText());
         messageResponse.setReadStatus(message.getReadStatus().toString());
-        //}
         commonResponseData.setData(messageResponse);
 
         return commonResponseData;
@@ -355,12 +344,10 @@ public class DialogsServiceImpl implements DialogsService {
 
     @Override
     public CommonResponseData getStatusAndLastActivity(long idPerson, long idDialog) {
-
         CommonResponseData commonResponseData = new CommonResponseData();
-        commonResponseData.setError("string");
         commonResponseData.setTimestamp(LocalDateTime.now());
         UserStatusResponse userStatusResponse = new UserStatusResponse();
-        /**Сессия не храниться, статус неизвестен*/
+        //Сессия не храниться, статус неизвестен
         boolean status = false;
         Dialog dialog = dialogRepository.findById(idDialog);
         Person person = personRepository.findById(idPerson);
@@ -369,8 +356,10 @@ public class DialogsServiceImpl implements DialogsService {
             LocalDateTime lastActivityInTheDialogFromPerson = messageRepository.getTheTimeOfTheLastMessageOfTheDialogFromThePerson(dialog, person);
             userStatusResponse.setOnline(status);
             userStatusResponse.setLastActivity(Utils.getLongFromLocalDateTime(lastActivityInTheDialogFromPerson));
+        }else {
+            commonResponseData.setError("статус неизвестен");
+            return commonResponseData;
         }
-
         commonResponseData.setData(userStatusResponse);
 
         return commonResponseData;

@@ -14,6 +14,8 @@ import java.time.LocalDateTime;
 public interface PostRepository extends JpaRepository<Post, Long> {
 	Page<Post> findAllByPerson(Person person, Pageable pageable);
 
+	Page<Post> findAllByPersonAndIsDeletedFalse(Person person, Pageable pageable);
+
 	@Query(value = "SELECT * \n" +
 			"FROM post \n" +
 			"WHERE lower(post_text) LIKE lower('%'||?2||'%') \n" +

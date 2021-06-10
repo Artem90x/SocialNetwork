@@ -26,4 +26,5 @@ public class CommonResponse {
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = Utils.getLongFromLocalDateTime(timestamp);
     }
+
 }

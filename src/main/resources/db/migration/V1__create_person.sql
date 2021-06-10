@@ -1,3 +1,4 @@
+
 CREATE TYPE perm_message AS ENUM ('ALL', 'FRIENDS');
 
 --CREATE CAST (varchar AS perm_message) WITH INOUT AS IMPLICIT;
@@ -20,3 +21,6 @@ CREATE TABLE person (
 	last_online_time timestamp NOT NULL,
 	is_blocked boolean NOT NULL,
 	PRIMARY KEY (id));
+
+ SELECT setval('person_id_seq', 50, true);
+

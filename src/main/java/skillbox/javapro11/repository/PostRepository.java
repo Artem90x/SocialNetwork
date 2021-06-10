@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import skillbox.javapro11.model.entity.Person;
 import skillbox.javapro11.model.entity.Post;
@@ -22,4 +23,11 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 			" and time between ?3 and ?4 \n" +
 			" and is_deleted = false", nativeQuery = true)
 	Page<Post> findAllPostsBySearch(Pageable page, String text, LocalDateTime dateFrom, LocalDateTime dateTo);
+
+
+	@Query("SELECT po FROM Post po WHERE person.id IN " +
+			"(SELECT t FROM Person p LEFT JOIN Friendship f ON f.dstPerson.id = p.id  " +
+			"INNER JOIN FriendshipStatus fs ON f.status.id = fs.id " +
+			"INNER JOIN Person t ON f.srcPerson.id = t.id WHERE p.id = :id AND fs.code = :code)")
+    Page<Post> findAllNews(@Param("id") long id, @Param("code") String code, Pageable page);
 }

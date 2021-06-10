@@ -1,3 +1,5 @@
+
+
 CREATE TYPE rd_status AS ENUM ('SENT', 'READ');
 
 CREATE TABLE message (
@@ -10,3 +12,5 @@ CREATE TABLE message (
 	read_status rd_status not null,
 	is_deleted boolean,
     primary key (id));
+
+    ALTER SEQUENCE message_id_seq START 10 INCREMENT 1;

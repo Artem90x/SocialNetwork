@@ -2,7 +2,6 @@ package skillbox.javapro11.service.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import skillbox.javapro11.api.request.RegisterRequest;
@@ -10,15 +9,18 @@ import skillbox.javapro11.model.entity.Person;
 import skillbox.javapro11.repository.PersonRepository;
 import skillbox.javapro11.service.PersonService;
 
+
 @Service
 public class PersonServiceImpl implements PersonService {
     private static final Logger LOGGER = LoggerFactory.getLogger(PersonServiceImpl.class);
 
-    @Autowired
-    private PersonRepository personRepository;
+    private final PersonRepository personRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    public PersonServiceImpl(PersonRepository personRepository, PasswordEncoder passwordEncoder) {
+        this.personRepository = personRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     public Person findPersonByEmail(String email) {
@@ -57,5 +59,10 @@ public class PersonServiceImpl implements PersonService {
         save(curPerson);
         LOGGER.info("new email: " + email);
         return message;
+    }
+
+    @Override
+    public Person findById(long id) {
+        return personRepository.findById(id);
     }
 }

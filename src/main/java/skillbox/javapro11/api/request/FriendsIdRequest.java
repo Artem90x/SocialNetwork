@@ -1,17 +1,17 @@
-package skillbox.javapro11.api.response;
+package skillbox.javapro11.api.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class FriendResponse extends ResponseData {
+public class FriendsIdRequest {
 
-    @JsonProperty(value = "user_id")
-    private long userId;
-
-    private String status;
+    @JsonProperty(value = "user_ids")
+    private List<Long> userIds;
 }

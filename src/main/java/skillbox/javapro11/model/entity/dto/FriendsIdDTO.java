@@ -1,17 +1,15 @@
-package skillbox.javapro11.api.response;
+package skillbox.javapro11.model.entity.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class FriendResponse extends ResponseData {
-
-    @JsonProperty(value = "user_id")
+public class FriendsIdDTO {
     private long userId;
-
     private String status;
 }

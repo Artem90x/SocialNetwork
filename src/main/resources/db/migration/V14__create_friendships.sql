@@ -10,11 +10,11 @@
         ALTER SEQUENCE friendships_id_seq START 10 INCREMENT 1;
 
 
-    INSERT INTO friendships
-        VALUES (1, 1, 2, 1),
-               (2, 2, 3, 1),
-               (3, 3, 4, 2),
-               (4, 4, 4, 3),
-               (5, 5, 4, 5),
-               (6, 6, 6, 1);
+--    INSERT INTO friendships (status_id, src_person_id, dst_person_id)
+--        VALUES (1, 2, 1),
+--               (2, 3, 1),
+--               (3, 4, 2),
+--               (4, 4, 3),
+--               (5, 4, 5),
+--               (6, 6, 1);
 

@@ -51,7 +51,7 @@ public class FriendsController {
         PageRequest pageable = PageRequest.of(getPage(offset, perPage), perPage);
         Page<Person> persons = friendsService.getFriends(name, FRIEND.name(), pageable);
 
-        return new CommonListResponse(
+        return ResponseEntity.ok(new CommonListResponse(
                 "",
                 Utils.getLongFromLocalDateTime(LocalDateTime.now()),
                 persons.getTotalElements(),
@@ -88,7 +88,7 @@ public class FriendsController {
         PageRequest pageable = PageRequest.of(getPage(offset, perPage), perPage);
         Page<Person> persons = friendsService.getFriends(name, REQUEST.name(), pageable);
 
-        return new CommonListResponse(
+        return ResponseEntity.ok(new CommonListResponse(
                 "",
                 Utils.getLongFromLocalDateTime(LocalDateTime.now()),
                 persons.getTotalElements(),
@@ -105,13 +105,13 @@ public class FriendsController {
         PageRequest pageable = PageRequest.of(getPage(offset, perPage), perPage);
         Page<Person> recommendations = friendsService.getRecommendations(pageable);
 
-        return new CommonListResponse(
+        return ResponseEntity.ok(new CommonListResponse(
                 "",
                 Utils.getLongFromLocalDateTime(LocalDateTime.now()),
                 recommendations.getTotalElements(),
                 pageable.getOffset(),
                 pageable.getPageSize(),
-                new ArrayList<>(PersonResponse.fromPersonList(recommendations.getContent())));
+                new ArrayList<>(PersonResponse.fromPersonList(recommendations.getContent()))));
     }
 
     @PostMapping("/is/friends")

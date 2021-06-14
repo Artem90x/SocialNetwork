@@ -113,8 +113,7 @@ public class FriendsController {
                 recommendations.getTotalElements(),
                 pageable.getOffset(),
                 pageable.getPageSize(),
-                new ArrayList<>(PersonResponse.fromPersonList(recommendations.getContent())))
-        );
+                new ArrayList<>(PersonResponse.fromPersonList(recommendations.getContent()))));
     }
 
     @PostMapping("/is/friends")

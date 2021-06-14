@@ -19,11 +19,11 @@
 
 
 
-    INSERT INTO friendships_status
-            VALUES (1, current_timestamp, 'name', 'FRIEND'),
-                   (2, current_timestamp, 'name', 'FRIEND'),
-                   (3, current_timestamp, 'name', 'FRIEND'),
-                   (4, current_timestamp, 'name', 'FRIEND'),
-                   (5, current_timestamp, 'name', 'FRIEND'),
-                   (6, current_timestamp, 'name', 'REQUEST');
+    INSERT INTO friendships_status (time, name, code)
+            VALUES (current_timestamp, 'name', 'FRIEND'),
+                   (current_timestamp, 'name', 'FRIEND'),
+                   (current_timestamp, 'name', 'FRIEND'),
+                   (current_timestamp, 'name', 'FRIEND'),
+                   (current_timestamp, 'name', 'FRIEND'),
+                   (current_timestamp, 'name', 'REQUEST');
 

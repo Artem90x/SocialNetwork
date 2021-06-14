@@ -108,7 +108,7 @@ public class ProfileServiceImpl implements ProfileService {
         Person person = personRepository.findById(userId);
         Pageable pageable = Utils.getPageable(offset, itemPerPage);
 
-        Page<Post> postPage = postRepository.findAllByPerson(person, pageable);
+        Page<Post> postPage = postRepository.findAllByPersonAndIsDeletedFalse(person, pageable);
         //build response
         return new CommonListResponse(
                 "string",

@@ -37,9 +37,8 @@ public class PostController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> editPostById(@PathVariable("id") long postId,
-                             @PathVariable("publish_data") long publishData,
                              @RequestBody PostRequest post){
-        CommonResponseData commonResponseData = postService.editPostById(postId, publishData, post);
+        CommonResponseData commonResponseData = postService.editPostById(postId, System.currentTimeMillis(), post);
         return new ResponseEntity<>(commonResponseData, HttpStatus.OK);
     }
 

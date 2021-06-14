@@ -57,7 +57,8 @@ public class FriendsController {
                 persons.getTotalElements(),
                 pageable.getOffset(),
                 pageable.getPageSize(),
-                new ArrayList<>(PersonResponse.fromPersonList(persons.getContent()))));
+                new ArrayList<>(PersonResponse.fromPersonList(persons.getContent()))
+        ));
     }
 
     @DeleteMapping("/friends/{id}")
@@ -94,7 +95,8 @@ public class FriendsController {
                 persons.getTotalElements(),
                 pageable.getOffset(),
                 pageable.getPageSize(),
-                new ArrayList<>(PersonResponse.fromPersonList(persons.getContent()))));
+                new ArrayList<>(PersonResponse.fromPersonList(persons.getContent())))
+        );
     }
 
     @GetMapping("/friends/recommendations")

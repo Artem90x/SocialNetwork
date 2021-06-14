@@ -83,18 +83,32 @@ public class LikeServiceImpl implements LikeService {
 	public CommonResponseData putLike(LikeRequest likeRequest) {
 		Person currentPerson = accountService.getCurrentPerson();
 		if (likeRequest.getType().equals(LikeType.COMMENT.getType())) {
-			CommentLike like = new CommentLike();
-			like.setComment(commentRepository.getOne(likeRequest.getItemId()));
-			like.setPerson(personRepository.getOne(currentPerson.getId()));
-			like.setTime(LocalDateTime.now());
-			commentLikeRepository.save(like);
+			Comment currentComment = commentRepository.getOne(likeRequest.getItemId());
+			CommentLike currentLike = commentLikeRepository.findByPersonAndComment(currentPerson, currentComment.getId());
+			if (currentLike == null) {
+				CommentLike like = new CommentLike();
+				like.setComment(currentComment);
+				like.setPerson(personRepository.getOne(currentPerson.getId()));
+				like.setTime(LocalDateTime.now());
+				commentLikeRepository.save(like);
+			}
+			else{
+				commentLikeRepository.delete(currentLike);
+			}
 		}
 		if (likeRequest.getType().equals(LikeType.POST.getType())) {
-			PostLike like = new PostLike();
-			like.setPerson(currentPerson);
-			like.setPost(postRepository.getOne(likeRequest.getItemId()));
-			like.setTime(LocalDateTime.now());
-			postLikeRepository.save(like);
+			Post currentPost = postRepository.getOne(likeRequest.getItemId());
+			PostLike currentLike = postLikeRepository.findByPersonAndPost(currentPerson, currentPost.getId());
+			if (currentLike == null) {
+				PostLike like = new PostLike();
+				like.setPerson(currentPerson);
+				like.setPost(currentPost);
+				like.setTime(LocalDateTime.now());
+				postLikeRepository.save(like);
+			}
+			else{
+				postLikeRepository.delete(currentLike);
+			}
 		}
 		return getUsersWhoLiked(likeRequest.getItemId(), likeRequest.getType());
 	}

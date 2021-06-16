@@ -211,7 +211,7 @@ public class DialogsServiceImplTest {
         PageImpl<Message> messagePage = new PageImpl<>(messageList);
 
         Pageable pageable = PageRequest.of(offset / itemPerPage, itemPerPage);
-        Mockito.when(messageRepository.getMessageOfDialog(pageable, "", 1)).thenReturn(messagePage);
+//        Mockito.when(messageRepository.getMessageOfDialog(pageable, "", 1)).thenReturn(messagePage);
 
         CommonListResponse cListResponse = dialogsService.getMessageOfDialog(1, offset, itemPerPage, "");
         ResponseData responseData = cListResponse.getData().get(0);

@@ -49,8 +49,8 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 
     @Query( "SELECT m " +
             "FROM Message m " +
-            "WHERE m.dialog.id = :idDialog AND m.text LIKE %:query% ")
-    Page<Message> getMessageOfDialog(Pageable pageable, String query, long idDialog);
+            "WHERE m.dialog.id = :idDialog")
+    Page<Message> getMessageOfDialog(Pageable pageable, long idDialog);
 
     @Query("SELECT m " +
             "FROM Message m " +

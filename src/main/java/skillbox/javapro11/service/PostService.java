@@ -22,6 +22,4 @@ public interface PostService {
   CommonResponseData deleteComment(long postId, long idComment);
   CommonResponseData reportComment(long postId, long idComment);
   CommonResponseData recoverComment(long postId, long idComment);
-
-    Page<Post> findAllByAuthorId(long id, Pageable page);
 }

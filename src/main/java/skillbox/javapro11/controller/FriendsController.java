@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,88 +43,77 @@ public class FriendsController {
     }
 
     @GetMapping("/friends")
-    public CommonListResponse getFriends(@RequestParam(required = false) Integer offset,
-                                         @RequestParam(required = false) Integer perPage,
-                                         @RequestParam(required = false) String name) {
-
-        if (offset == null && perPage == null) {
-            offset = 0;
-            perPage = 20;
-        }
+    public ResponseEntity<CommonListResponse> getFriends(
+            @RequestParam(required = false, defaultValue = "0") Integer offset,
+            @RequestParam(required = false, defaultValue = "20") Integer perPage,
+            @RequestParam(required = false) String name) {
 
         PageRequest pageable = PageRequest.of(getPage(offset, perPage), perPage);
         Page<Person> persons = friendsService.getFriends(name, FRIEND.name(), pageable);
 
-        return new CommonListResponse(
+        return ResponseEntity.ok(new CommonListResponse(
                 "",
                 Utils.getLongFromLocalDateTime(LocalDateTime.now()),
                 persons.getTotalElements(),
                 pageable.getOffset(),
                 pageable.getPageSize(),
-                new ArrayList<>(PersonResponse.fromPersonList(persons.getContent())));
+                new ArrayList<>(PersonResponse.fromPersonList(persons.getContent()))
+        ));
     }
 
     @DeleteMapping("/friends/{id}")
-    public CommonResponseData deleteFriend(@PathVariable Long id) {
+    public ResponseEntity<CommonResponseData> deleteFriend(@PathVariable Long id) {
+
         friendsService.deleteById(id);
-        return new CommonResponseData(
+        return ResponseEntity.ok(new CommonResponseData(
                 "",
                 Utils.getLongFromLocalDateTime(LocalDateTime.now()),
-                new StatusMessageResponse("ok")
-        );
+                new StatusMessageResponse("ok")));
     }
 
     @PostMapping("/friends/{id}")
-    public CommonResponseData addFriend(@PathVariable Long id) {
+    public ResponseEntity<CommonResponseData> addFriend(@PathVariable Long id) {
         friendsService.addFriend(id);
-        return new CommonResponseData(
+        return ResponseEntity.ok(new CommonResponseData(
                 "",
                 Utils.getLongFromLocalDateTime(LocalDateTime.now()),
-                new StatusMessageResponse("ok")
-        );
+                new StatusMessageResponse("ok")));
     }
 
     @GetMapping("/friends/request")
-    public CommonListResponse getFriendsRequest(@RequestParam(required = false) Integer offset,
-                                                @RequestParam(required = false) Integer perPage,
-                                                @RequestParam(required = false) String name) {
-
-        if (offset == null && perPage == null) {
-            offset = 0;
-            perPage = 20;
-        }
+    public ResponseEntity<CommonListResponse> getFriendsRequest(
+            @RequestParam(required = false, defaultValue = "0") Integer offset,
+            @RequestParam(required = false, defaultValue = "20") Integer perPage,
+            @RequestParam(required = false) String name) {
 
         PageRequest pageable = PageRequest.of(getPage(offset, perPage), perPage);
         Page<Person> persons = friendsService.getFriends(name, REQUEST.name(), pageable);
 
-        return new CommonListResponse(
+        return ResponseEntity.ok(new CommonListResponse(
                 "",
                 Utils.getLongFromLocalDateTime(LocalDateTime.now()),
                 persons.getTotalElements(),
                 pageable.getOffset(),
                 pageable.getPageSize(),
-                new ArrayList<>(PersonResponse.fromPersonList(persons.getContent())));
+                new ArrayList<>(PersonResponse.fromPersonList(persons.getContent())))
+        );
     }
 
     @GetMapping("/friends/recommendations")
-    public CommonListResponse getRecommendations(@RequestParam(required = false) Integer offset,
-                                                 @RequestParam(required = false) Integer perPage) {
-
-        if (offset == null && perPage == null) {
-            offset = 0;
-            perPage = 20;
-        }
+    public ResponseEntity<CommonListResponse> getRecommendations(
+            @RequestParam(required = false, defaultValue = "0") Integer offset,
+            @RequestParam(required = false, defaultValue = "20") Integer perPage) {
 
         PageRequest pageable = PageRequest.of(getPage(offset, perPage), perPage);
         Page<Person> recommendations = friendsService.getRecommendations(pageable);
 
-        return new CommonListResponse(
+        return ResponseEntity.ok(new CommonListResponse(
                 "",
                 Utils.getLongFromLocalDateTime(LocalDateTime.now()),
                 recommendations.getTotalElements(),
                 pageable.getOffset(),
                 pageable.getPageSize(),
-                new ArrayList<>(PersonResponse.fromPersonList(recommendations.getContent())));
+                new ArrayList<>(PersonResponse.fromPersonList(recommendations.getContent()))));
     }
 
     @PostMapping("/is/friends")

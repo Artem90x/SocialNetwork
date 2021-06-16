@@ -75,6 +75,7 @@ public class PostServiceImpl implements PostService {
     post.setText(postRequest.getText());
     post.setTitle(postRequest.getTitle());
     response.setData(PostResponse.fromPost(post));
+    postRepository.save(post);
     return response;
   }
 
@@ -216,10 +217,5 @@ public class PostServiceImpl implements PostService {
 
     response.setData(CommentResponse.fromComment(comment));
     return response;
-  }
-
-  @Override
-  public Page<Post> findAllByAuthorId(long id, Pageable page) {
-    return postRepository.findAllByAuthorId(id, page);
   }
 }

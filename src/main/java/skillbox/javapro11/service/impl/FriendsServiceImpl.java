@@ -40,7 +40,8 @@ public class FriendsServiceImpl implements FriendsService {
     @Override
     public void deleteById(long srcId) {
         long dstId = accountService.getCurrentPerson().getId();
-        friendsRepository.deleteById(srcId, dstId);
+        Friendship friendship = friendsRepository.findAllBySrcPersonIdAndDstPersonId(srcId, dstId);
+        friendsRepository.delete(friendship);
     }
 
     @Override

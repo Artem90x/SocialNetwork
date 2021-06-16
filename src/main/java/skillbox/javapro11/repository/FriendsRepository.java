@@ -12,7 +12,6 @@ import skillbox.javapro11.model.entity.dto.FriendsIdDTO;
 import java.util.List;
 
 @Repository
-@Transactional
 public interface FriendsRepository extends JpaRepository<Friendship, Long> {
 
     @Query(value = "SELECT new skillbox.javapro11.model.entity.dto" +
@@ -20,10 +19,6 @@ public interface FriendsRepository extends JpaRepository<Friendship, Long> {
             "INNER JOIN Friendship f ON f.status.id = fs.id " +
             "WHERE f.dstPerson.id = :dstId AND f.srcPerson.id IN :userIds  AND fs.code = 'FRIEND'")
     List<FriendsIdDTO> isFriends(@Param("dstId") long dstId, @Param("userIds") List<Long> userIds);
-
-    @Modifying
-    @Query("DELETE FROM Friendship WHERE src_person_id = :srcId AND dst_person_id = :dstId")
-    void deleteById(@Param("srcId") long srcId, @Param("dstId") long dstId);
 
     Friendship findAllBySrcPersonIdAndDstPersonId(long srcPersonId, long dstPersonId);
 }

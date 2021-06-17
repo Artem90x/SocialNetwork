@@ -14,6 +14,8 @@ import skillbox.javapro11.service.FriendsService;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import static skillbox.javapro11.enums.FriendshipStatusCode.*;
 
@@ -40,19 +42,36 @@ public class FriendsServiceImpl implements FriendsService {
     @Override
     public void deleteById(long srcId) {
         long dstId = accountService.getCurrentPerson().getId();
-        Friendship friendship = friendsRepository.findAllBySrcPersonIdAndDstPersonId(srcId, dstId);
+        Friendship friendship = friendsRepository
+                .findAllBySrcPersonIdAndDstPersonId(srcId, dstId)
+                .orElseThrow(NoSuchElementException::new);
         friendsRepository.delete(friendship);
     }
 
     @Override
     public void addFriend(long srcId) {
-        long dstPersonId = accountService.getCurrentPerson().getId();
-        long srcPersonId = personRepository.findById(srcId).getId();
-        Friendship friendship = friendsRepository.findAllBySrcPersonIdAndDstPersonId(srcPersonId, dstPersonId);
-        FriendshipStatus status = friendship.getStatus();
-        status.setCode(FRIEND.name());
-        status.setName(FRIEND.name());
-        status.setTime(LocalDateTime.now());
+        Person dstPerson = accountService.getCurrentPerson();
+        Person srcPerson = personRepository.findById(srcId);
+        Friendship friendship = friendsRepository
+                .findAllBySrcPersonIdAndDstPersonId(srcPerson.getId(), dstPerson.getId())
+                .orElse(new Friendship());
+
+        FriendshipStatus status;
+
+        if (friendship.getStatus() == null) {
+            status = new FriendshipStatus();
+            status.setCode(REQUEST.name());
+            status.setName(REQUEST.name());
+            status.setTime(LocalDateTime.now());
+            friendship.setStatus(status);
+            friendship.setDstPerson(dstPerson);
+            friendship.setSrcPerson(srcPerson);
+        } else {
+            status = friendship.getStatus();
+            status.setCode(FRIEND.name());
+            status.setName(FRIEND.name());
+            status.setTime(LocalDateTime.now());
+        }
         friendsRepository.save(friendship);
     }
 

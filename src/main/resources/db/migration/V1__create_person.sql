@@ -1,3 +1,4 @@
+CREATE sequence hibernate_sequence start 1 increment 1;
 
 CREATE TYPE perm_message AS ENUM ('ALL', 'FRIENDS');
 
@@ -21,6 +22,3 @@ CREATE TABLE person (
 	last_online_time timestamp NOT NULL,
 	is_blocked boolean NOT NULL,
 	PRIMARY KEY (id));
-
- SELECT setval('person_id_seq', 50, true);
-

@@ -10,6 +10,7 @@ import skillbox.javapro11.model.entity.Friendship;
 import skillbox.javapro11.model.entity.dto.FriendsIdDTO;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface FriendsRepository extends JpaRepository<Friendship, Long> {
@@ -20,5 +21,8 @@ public interface FriendsRepository extends JpaRepository<Friendship, Long> {
             "WHERE f.dstPerson.id = :dstId AND f.srcPerson.id IN :userIds  AND fs.code = 'FRIEND'")
     List<FriendsIdDTO> isFriends(@Param("dstId") long dstId, @Param("userIds") List<Long> userIds);
 
-    Friendship findAllBySrcPersonIdAndDstPersonId(long srcPersonId, long dstPersonId);
+    @Query("SELECT f FROM Friendship f " +
+            "WHERE (f.dstPerson.id = :dstId AND f.srcPerson.id = :srcId) " +
+            "OR (f.dstPerson.id = :srcId AND f.srcPerson.id = :dstId)")
+    Optional<Friendship> findAllBySrcPersonIdAndDstPersonId(@Param("srcId") long srcPersonId, @Param("dstId") long dstPersonId);
 }

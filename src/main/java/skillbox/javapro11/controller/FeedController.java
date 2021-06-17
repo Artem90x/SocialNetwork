@@ -18,7 +18,7 @@ public class FeedController {
 
 
     @GetMapping("")
-    public ResponseEntity<?> getNewsList(@RequestParam("name") String name,
+    public ResponseEntity<?> getNewsList(@RequestParam(required = false, defaultValue = "") String name,
                                          @RequestParam(required = false, defaultValue = "0") long offset,
                                          @RequestParam(required = false, defaultValue = "20") Integer itemPerPage) {
         return new ResponseEntity<>(feedService.getNewsList(name, offset, itemPerPage), HttpStatus.OK);

@@ -21,13 +21,18 @@ public interface PersonRepository extends JpaRepository<Person, Long>, JpaSpecif
     Person findByPassword(String passwordNew);
 
     @Query(value = "select p.*\n" +
-        "from person p, person2dialog d\n" +
-        "where  d.person_id = p.id and  d.dialog_id = ?1",nativeQuery = true)
+            "from person p, person2dialog d\n" +
+            "where  d.person_id = p.id and  d.dialog_id = ?1", nativeQuery = true)
     List<Person> findPersonByDialog(long dialogId);
 
-    @Query("SELECT p FROM Person p LEFT JOIN Friendship f ON f.srcPerson.id = p.id " +
+    @Query("SELECT p FROM Person p WHERE p.id IN " +
+            "(SELECT p.id FROM Person p LEFT JOIN Friendship f ON f.srcPerson.id = p.id " +
             "INNER JOIN FriendshipStatus fs ON f.status.id = fs.id " +
-            "INNER JOIN Person t ON f.dstPerson.id = t.id WHERE t.id = :id AND fs.code = :code")
+            "INNER JOIN Person t ON f.dstPerson.id = t.id WHERE t.id = :id AND fs.code = :code) " +
+            "OR p.id IN " +
+            "(SELECT a.id FROM Person a LEFT JOIN Friendship fa ON fa.dstPerson.id = a.id " +
+            "INNER JOIN FriendshipStatus fas ON fa.status.id = fas.id " +
+            "INNER JOIN Person b ON fa.srcPerson.id = b.id WHERE b.id = :id AND fas.code = :code)")
     Page<Person> findAllFriends(@Param("id") long id, @Param("code") String code, Pageable pageable);
 
     @Query("SELECT c FROM Person a " +

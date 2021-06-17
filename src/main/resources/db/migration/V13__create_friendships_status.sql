@@ -8,7 +8,7 @@
         code VARCHAR(255) NOT NULL,
         PRIMARY KEY (id));
 
-        ALTER SEQUENCE friendships_status_id_seq START 10 INCREMENT 1;
+
 
     --    code
     --    REQUEST - Запрос на добавление в друзья
@@ -18,12 +18,4 @@
     --    SUBSCRIBED - Подписан
 
 
-
-    INSERT INTO friendships_status (time, name, code)
-            VALUES (current_timestamp, 'name', 'FRIEND'),
-                   (current_timestamp, 'name', 'FRIEND'),
-                   (current_timestamp, 'name', 'FRIEND'),
-                   (current_timestamp, 'name', 'FRIEND'),
-                   (current_timestamp, 'name', 'FRIEND'),
-                   (current_timestamp, 'name', 'REQUEST');
 

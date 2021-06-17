@@ -13,4 +13,3 @@ CREATE TABLE message (
 	is_deleted boolean,
     primary key (id));
 
-    ALTER SEQUENCE message_id_seq START 10 INCREMENT 1;

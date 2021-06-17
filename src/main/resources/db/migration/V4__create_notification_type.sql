@@ -8,4 +8,3 @@ CREATE TABLE notification_type
     PRIMARY KEY (id)
 );
 
-ALTER SEQUENCE notification_type_id_seq START 10 INCREMENT 1;

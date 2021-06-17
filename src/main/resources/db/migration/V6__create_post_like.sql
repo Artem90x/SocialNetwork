@@ -6,5 +6,4 @@ create table post_like (
     post_id bigint not null,
     primary key (id));
 
-    ALTER SEQUENCE post_like_id_seq START 10 INCREMENT 1;
 

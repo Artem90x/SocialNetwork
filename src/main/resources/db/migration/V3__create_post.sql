@@ -9,4 +9,3 @@ create table post (
     author_id bigint not null,
     primary key (id));
 
-    ALTER SEQUENCE post_id_seq START 10 INCREMENT 1;

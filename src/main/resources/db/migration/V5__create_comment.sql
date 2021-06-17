@@ -10,4 +10,3 @@ create table comment (
     post_id bigint not null,
     primary key (id));
 
-    ALTER SEQUENCE comment_id_seq START 10 INCREMENT 1;

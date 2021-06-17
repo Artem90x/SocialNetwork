@@ -31,10 +31,9 @@ public class ProfileEditRequest {
 
     private String about;
 
-    @JsonProperty("town_id")
+    @JsonProperty("city")
     private String town;
 
-    @JsonProperty("country_id")
     private String country;
 
     private PermissionMessage permissionMessage;

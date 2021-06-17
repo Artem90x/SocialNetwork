@@ -50,7 +50,6 @@ public class PostServiceImpl implements PostService {
       return response;
     }
     Post post = optionalPost.get();
-    postRepository.save(post);
     response.setData(PostResponse.fromPost(post));
     return response;
   }
